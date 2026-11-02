@@ -1,479 +1,430 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="light">
+<html lang="zh-TW" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>復古許願池 - 朋友動態留言板</title>
-
-  <!-- Google Fonts: Playfair Display, Courier Prime & Noto Serif TC -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@500;700;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            vintage: {
-              bg: '#fbf8f3',        /* 米白復古羊皮紙色 */
-              card: '#ffffff',      /* 卡片純白色 */
-              border: '#e2d7c5',    /* 典雅紙張邊框 */
-              accent: '#c07a50',    /* 暖陶土色 */
-              gold: '#d4a359',      /* 柔和復古金色 */
-              sage: '#8a9a86',      /* 灰綠色 */
-              text: '#2c2825',      /* 深 sepia 墨色 */
-              muted: '#7a7067',     /* 淺棕灰色 */
-              hover: '#b06a40'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAGE 04: RESPONSIVE HUD // 鄧友盛 PORTFOLIO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;900&family=Fira+Code:wght@400;600;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gaming: {
+                            bg: '#05070f',
+                            card: 'rgba(12, 16, 30, 0.85)',
+                            neonGreen: '#00ff66',
+                            neonCyan: '#00f0ff',
+                            neonPink: '#ff0055',
+                            neonPurple: '#9d00ff',
+                            gold: '#ffcc00',
+                            darkLocked: '#0d111d'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Chakra Petch', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                        sans: ['Noto Sans TC', 'sans-serif']
+                    }
+                }
             }
-          },
-          fontFamily: {
-            serif: ['Playfair Display', 'Noto Serif TC', 'serif'],
-            mono: ['Courier Prime', 'monospace']
-          }
         }
-      }
-    }
-  </script>
+    </script>
 
-  <style>
-    /* 全局復古風格 */
-    body {
-      font-family: 'Noto Serif TC', 'Playfair Display', serif;
-      background-color: #fbf8f3;
-      color: #2c2825;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+    <style>
+        body {
+            background-color: #05070f;
+            color: #f7f7f7;
+            overflow-x: hidden;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
 
-    /* 復古羊皮紙微細網格 background */
-    .vintage-grid {
-      background-image:
-        linear-gradient(to right, rgba(192, 122, 80, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(192, 122, 80, 0.05) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
+        /* Cyberpunk Mesh Grid */
+        .cyber-grid {
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 0, 85, 0.08) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
 
-    /* 復古紙張面板與浮動動畫 */
-    @keyframes gentleFloat {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-4px); }
-    }
+        /* Scanline Overlay Effect */
+        .scanline {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0, 0, 0, 0.4) 50%,
+                rgba(0, 0, 0, 0.4)
+            );
+            background-size: 100% 4px;
+        }
 
-    .vintage-card {
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(10px);
-      border: 1px solid #e2d7c5;
-      box-shadow: 0 10px 25px -5px rgba(180, 160, 140, 0.2), 0 4px 10px rgba(0, 0, 0, 0.03);
-      animation: gentleFloat 7s ease-in-out infinite;
-    }
+        /* Gaming Panel Glass */
+        .gaming-panel {
+            background: rgba(12, 16, 30, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.08), inset 0 0 15px rgba(0, 240, 255, 0.03);
+        }
 
-    /* Vệt sáng lướt qua khi di chuột (Shine Sweep) */
-    .shine-effect {
-      position: relative;
-      overflow: hidden;
-    }
-    .shine-effect::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(212, 163, 89, 0.25), transparent);
-      transition: 0.6s ease;
-    }
-    .shine-effect:hover::before {
-      left: 100%;
-    }
+        /* Gaming Card Active Glow */
+        .card-active {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
 
-    /* Con dấu xoay tròn tự動 */
-    @keyframes slowSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .seal-spin {
-      animation: slowSpin 20s linear infinite;
-    }
+        .card-active::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 240, 255, 0.15), transparent);
+            transform: rotate(45deg);
+            transition: 0.6s ease;
+        }
 
-    /* Con trỏ máy chữ blink */
-    .typing-cursor::after {
-      content: '|';
-      animation: blink 0.8s infinite;
-      color: #c07a50;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
+        .card-active:hover::before {
+            top: 100%; left: 100%;
+        }
 
-    /* 自訂滾動條 */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #fbf8f3;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #d4a359;
-      border-radius: 4px;
-    }
+        .card-active:hover {
+            transform: translateY(-4px);
+            border-color: #00ff66;
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.25);
+        }
 
-    /* 復古角花邊框 */
-    .vintage-corner {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      border-color: #c07a50;
-      transition: all 0.3s ease;
-    }
-    .v-tl { top: 6px; left: 6px; border-top: 1px solid; border-left: 1px solid; }
-    .v-tr { top: 6px; right: 6px; border-top: 1px solid; border-right: 1px solid; }
-    .v-bl { bottom: 6px; left: 6px; border-bottom: 1px solid; border-left: 1px solid; }
-    .v-br { bottom: 6px; right: 6px; border-bottom: 1px solid; border-right: 1px solid; }
+        /* Gaming Tech Chamfer Corners */
+        .tech-corner {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-color: #00f0ff;
+            transition: all 0.3s ease;
+        }
+        .tc-tl { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
+        .tc-tr { top: -1px; right: -1px; border-top: 2px solid; border-right: 2px solid; }
+        .tc-bl { bottom: -1px; left: -1px; border-bottom: 2px solid; border-left: 2px solid; }
+        .tc-br { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; }
 
-    .wish-card:hover .vintage-corner {
-      width: 12px;
-      height: 12px;
-    }
+        .gaming-panel:hover .tech-corner {
+            border-color: #00ff66;
+            width: 12px;
+            height: 12px;
+        }
 
-    /* 許願卡片 Hover 特效 */
-    .wish-card {
-      transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-    .wish-card:hover {
-      transform: translateY(-6px) scale(1.01);
-      border-color: #c07a50;
-      box-shadow: 0 14px 30px rgba(192, 122, 80, 0.22);
-    }
+        /* Typewriter Cursor */
+        .typing-cursor::after {
+            content: '█';
+            animation: blink 0.6s infinite;
+            color: #00ff66;
+        }
 
-    /* 水波/加載圈圈 */
-    .ripple-loader {
-      position: relative;
-      width: 80px;
-      height: 80px;
-    }
-    .ripple-loader div {
-      position: absolute;
-      border: 2px solid #c07a50;
-      opacity: 1;
-      border-radius: 50%;
-      animation: ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-    }
-    .ripple-loader div:nth-child(2) {
-      animation-delay: -1s;
-      border-color: #d4a359;
-    }
-    @keyframes ripple {
-      0% { top: 36px; left: 36px; width: 0; height: 0; opacity: 1; }
-      100% { top: 0px; left: 0px; width: 72px; height: 72px; opacity: 0; }
-    }
-  </style>
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
 </head>
-<body class="flex flex-col min-h-screen vintage-grid selection:bg-vintage-accent selection:text-white">
+<body class="min-h-screen relative flex flex-col justify-between selection:bg-gaming-neonGreen selection:text-black">
 
-  <!-- Interactive Dust & Click Burst Canvas -->
-  <canvas id="dustCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+    <!-- Background Layers -->
+    <div class="fixed inset-0 cyber-grid pointer-events-none z-0"></div>
+    <div class="fixed inset-0 scanline pointer-events-none z-10 opacity-30"></div>
+    <canvas id="dustCanvas" class="fixed inset-0 pointer-events-none z-10"></canvas>
 
-  <!-- ==================== 頁首標題區 ==================== -->
-  <header class="border-b border-vintage-border bg-white/80 backdrop-blur-md sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-vintage-bg border border-vintage-border flex items-center justify-center text-vintage-accent font-serif font-bold text-xl shadow-sm transform hover:rotate-12 transition-transform">
-          📜
-        </div>
-        <div>
-          <h1 class="text-xl md:text-2xl font-serif font-bold tracking-wide text-vintage-text">
-            復古許願池 <span class="text-vintage-accent font-mono text-lg md:text-xl">// 朋友悄悄話留言板</span>
-          </h1>
-          <p id="typewriterText" class="text-[11px] text-vintage-muted -mt-0.5 font-mono min-h-[16px] typing-cursor"></p>
-        </div>
-      </div>
-      <span class="text-xs px-3 py-1 rounded-full bg-vintage-bg text-vintage-accent font-mono border border-vintage-border shadow-sm flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-vintage-accent animate-ping"></span>
-        ✒️ 典雅日誌版
-      </span>
-    </div>
-  </header>
-
-  <!-- ==================== 主內容區 ==================== -->
-  <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:p-6 relative z-10 space-y-8">
-
-    <!-- Khu vực nhúng Google Form để gửi lời chúc / 許願表單區 -->
-    <section class="bg-white/90 rounded-2xl p-4 md:p-6 border border-vintage-border shadow-sm relative overflow-hidden">
-      <div class="vintage-corner v-tl"></div>
-      <div class="vintage-corner v-tr"></div>
-      <div class="vintage-corner v-bl"></div>
-      <div class="vintage-corner v-br"></div>
-     
-      <div class="flex items-center justify-between mb-4 border-b border-vintage-border/60 pb-3">
-        <h2 class="font-serif font-bold text-lg text-vintage-text flex items-center gap-2">
-          <i class="fa-solid fa-pen-nib text-vintage-accent"></i> 投遞您的許願金幣 (寫下留言)
-        </h2>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdSXP6DfZGxYmGaN1GKHBJbAaVV_RVXLj-f77FnVcHMfJxgWQ/viewform" target="_blank" class="text-xs font-mono text-vintage-accent hover:underline flex items-center gap-1">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> 在新分頁開啟表單
-        </a>
-      </div>
-
-      <div class="w-full overflow-hidden rounded-xl border border-vintage-border/50 bg-white">
-        <iframe
-          src="https://docs.google.com/forms/d/e/1FAIpQLSdSXP6DfZGxYmGaN1GKHBJbAaVV_RVXLj-f77FnVcHMfJxgWQ/viewform?embedded=true"
-          width="100%"
-          height="650"
-          frameborder="0"
-          marginheight="0"
-          marginwidth="0"
-          class="w-full"
-        >正在載入表單...</iframe>
-      </div>
-    </section>
-
-    <!-- 載入中動畫 -->
-    <div id="loading" class="flex flex-col items-center justify-center py-20 text-vintage-muted">
-      <div class="ripple-loader mb-4">
-        <div></div>
-        <div></div>
-      </div>
-      <div class="font-serif text-sm tracking-widest text-vintage-accent animate-pulse">正在開啟典雅日誌，讀取留言中...</div>
-    </div>
-
-    <!-- 留言板卡片呈現區 -->
-    <div id="message-board" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" style="display: none;"></div>
-
-  </main>
-
-  <footer class="border-t border-vintage-border bg-white/50 py-3.5 text-center text-xs font-mono text-vintage-muted relative z-10 mt-auto">
-    <p>© 2026 復古典雅許願池 • CLASSIC JOURNAL WISHES</p>
-  </footer>
-
-  <!-- ==================== JavaScript 邏輯 & 動態特效 ==================== -->
-  <script>
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/18joM6HHlNb9ojSSgLQR3ZYxV_pJwoTJXgaiUXMmZvDA/export?format=csv';
-
-    document.addEventListener('DOMContentLoaded', () => {
-      typeWriter();
-      animateCanvas();
-      fetchWishMessages();
-    });
-
-    // --- 1. TYPEWRITER ANIMATION ---
-    const fullText = "CLASSIC WISHING WELL • 投下一枚金幣，傳遞真摯祝福";
-    const typewriterEl = document.getElementById("typewriterText");
-    let typeIndex = 0;
-
-    function typeWriter() {
-      if (typeIndex < fullText.length) {
-        typewriterEl.textContent += fullText.charAt(typeIndex);
-        typeIndex++;
-        setTimeout(typeWriter, 50);
-      }
-    }
-
-    // --- 2. WEB AUDIO SOUND EFFECTS ---
-    let audioCtx = null;
-    function playSoftClickSFX() {
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(360, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(520, audioCtx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.08);
-      } catch(e) {}
-    }
-
-    // --- 3. DUST & CLICK PARTICLES CANVAS ---
-    const canvas = document.getElementById('dustCanvas');
-    const ctx = canvas.getContext('2d');
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    let burstParticles = [];
-    function triggerClickBurst(e) {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      for (let i = 0; i < 14; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 3 + 1.2;
-        burstParticles.push({
-          x: x,
-          y: y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          size: Math.random() * 3 + 1,
-          color: Math.random() > 0.5 ? '#c07a50' : '#d4a359',
-          alpha: 1
-        });
-      }
-    }
-
-    window.addEventListener('click', (e) => {
-      playSoftClickSFX();
-      triggerClickBurst(e);
-    });
-
-    function animateCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = burstParticles.length - 1; i >= 0; i--) {
-        let bp = burstParticles[i];
-        bp.x += bp.vx;
-        bp.y += bp.vy;
-        bp.vy += 0.04;
-        bp.alpha -= 0.025;
-
-        if (bp.alpha <= 0) {
-          burstParticles.splice(i, 1);
-          continue;
-        }
-
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, bp.alpha);
-        ctx.fillStyle = bp.color;
-        ctx.beginPath();
-        ctx.arc(bp.x, bp.y, bp.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-      requestAnimationFrame(animateCanvas);
-    }
-
-    // --- 4. FETCH CSV & RENDER ---
-    async function fetchWishMessages() {
-      const loadingEl = document.getElementById('loading');
-      const boardEl = document.getElementById('message-board');
-
-      try {
-        const response = await fetch(CSV_URL);
-        if (!response.ok) throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`);
-       
-        const csvText = await response.text();
-        const parsedData = parseCSV(csvText);
-
-        const messages = parsedData.slice(1).map(row => ({
-          timestamp: row[0] ? row[0].trim() : '',
-          name: row[1] ? row[1].trim() : '無名許願者',
-          message: row[2] ? row[2].trim() : ''
-        })).filter(item => item.message !== '' || item.name !== '');
-
-        loadingEl.style.display = 'none';
-        boardEl.style.display = 'grid';
-
-        renderMessages(messages);
-
-      } catch (error) {
-        console.error('Fetch Error:', error);
-        loadingEl.innerHTML = `
-          <div class="bg-white/80 p-6 rounded-2xl border border-vintage-border text-center text-vintage-text shadow-sm">
-            <i class="fa-solid fa-triangle-exclamation text-2xl text-vintage-accent mb-2"></i>
-            <h3 class="font-serif font-bold">無法讀取許願池留言</h3>
-            <p class="text-xs text-vintage-muted mt-1">請確認 Google 試算表已開啟「知道連結的人皆可查看」共用權限。</p>
-          </div>
-        `;
-      }
-    }
-
-    function parseCSV(text) {
-      const result = [];
-      let row = [];
-      let cur = '';
-      let inQuotes = false;
-
-      for (let i = 0; i < text.length; i++) {
-        const c = text[i];
-        const next = text[i + 1];
-
-        if (c === '"') {
-          if (inQuotes && next === '"') { cur += '"'; i++; }
-          else { inQuotes = !inQuotes; }
-        } else if (c === ',' && !inQuotes) {
-          row.push(cur); cur = '';
-        } else if ((c === '\r' || c === '\n') && !inQuotes) {
-          if (c === '\r' && next === '\n') i++;
-          row.push(cur); cur = '';
-          if (row.some(f => f.length > 0)) result.push(row);
-          row = [];
-        } else {
-          cur += c;
-        }
-      }
-      if (cur.length > 0 || row.length > 0) { row.push(cur); result.push(row); }
-      return result;
-    }
-
-    function renderMessages(messages) {
-      const boardEl = document.getElementById('message-board');
-
-      if (messages.length === 0) {
-        boardEl.innerHTML = `
-          <div class="col-span-full bg-white/80 p-8 rounded-2xl border border-vintage-border text-center text-vintage-muted font-serif">
-            <i class="fa-regular fa-paper-plane text-2xl mb-2 text-vintage-accent"></i>
-            <p>許願池目前尚無悄悄話，快投下第一枚金幣吧！</p>
-          </div>
-        `;
-        return;
-      }
-
-      const htmlContent = messages.reverse().map(item => {
-        const safeName = escapeHTML(item.name);
-        const safeMessage = escapeHTML(item.message);
-        const safeTime = escapeHTML(item.timestamp);
-        const firstChar = safeName.charAt(0).toUpperCase() || '許';
-
-        return `
-          <article class="wish-card bg-white/90 rounded-2xl p-5 border border-vintage-border relative flex flex-col justify-between shine-effect">
-            <div class="vintage-corner v-tl"></div>
-            <div class="vintage-corner v-tr"></div>
-            <div class="vintage-corner v-bl"></div>
-            <div class="vintage-corner v-br"></div>
-
-            <div>
-              <div class="flex items-center pb-3 border-b border-vintage-border/60 mb-3">
-                <div class="w-10 h-10 rounded-full bg-vintage-bg border border-vintage-border text-vintage-accent flex items-center justify-center font-serif font-bold text-base mr-3 shadow-sm flex-shrink-0">
-                  ${firstChar}
-                </div>
-                <div class="flex-1 overflow-hidden">
-                  <div class="font-serif font-bold text-vintage-text text-sm truncate">${safeName}</div>
-                  <div class="text-[11px] font-mono text-vintage-muted mt-0.5"><i class="fa-regular fa-clock"></i> ${safeTime}</div>
-                </div>
-              </div>
-              <div class="text-xs sm:text-sm leading-relaxed text-vintage-text font-serif whitespace-pre-wrap break-words mb-4">
-                ${safeMessage}
-              </div>
+    <!-- Top Navigation Bar -->
+    <nav class="relative z-30 w-full gaming-panel border-b border-gaming-neonCyan/30 px-4 py-3">
+        <div class="container mx-auto max-w-6xl flex items-center justify-between">
+            <a href="../index.html" onmouseenter="playHoverSFX()" onclick="playClickSFX()" class="flex items-center gap-2 font-display text-xs text-gaming-neonCyan border border-gaming-neonCyan/40 px-3 py-1.5 rounded hover:bg-gaming-neonCyan/20 transition group">
+                <span class="group-hover:-translate-x-1 transition-transform">◄</span> RETURN TO DASHBOARD
+            </a>
+            
+            <div class="font-display text-xs text-gaming-neonGreen font-bold tracking-widest hidden sm:flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-gaming-neonGreen animate-ping"></span>
+                MISSION STAGE 04 // ACTIVE
             </div>
 
-            <div class="text-right text-[11px] font-mono text-vintage-accent pt-2 border-t border-vintage-border/30 flex items-center justify-end gap-1">
-              <i class="fa-solid fa-feather"></i> Classic Journal
+            <button id="soundToggleBtn" onclick="toggleAudio()" class="font-display text-xs text-gaming-neonCyan flex items-center gap-1.5 border border-gaming-neonCyan/30 px-2.5 py-1 rounded hover:bg-gaming-neonCyan/10">
+                <span id="soundIcon">🔊</span> <span id="soundText">SFX</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="relative z-20 container mx-auto px-4 py-8 max-w-6xl flex-grow">
+
+        <!-- HEADER PANEL -->
+        <header class="w-full gaming-panel rounded-2xl p-6 sm:p-8 mb-8 border border-gaming-neonCyan/40 relative overflow-hidden">
+            <div class="tech-corner tc-tl"></div>
+            <div class="tech-corner tc-tr"></div>
+            <div class="tech-corner tc-bl"></div>
+            <div class="tech-corner tc-br"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="inline-block bg-gaming-neonGreen/20 text-gaming-neonGreen border border-gaming-neonGreen/40 px-2.5 py-0.5 rounded text-[10px] font-display font-bold uppercase tracking-widest mb-2">
+                        ★ COMPLETED MISSION
+                    </div>
+                    <h1 class="text-2xl sm:text-4xl font-display font-black text-white tracking-wider uppercase">
+                        STAGE 04 - <span class="text-gaming-neonCyan">響應式網頁設計 (RWD)</span>
+                    </h1>
+                    <p id="typewriterText" class="font-mono text-xs sm:text-sm text-gaming-neonCyan tracking-widest mt-2 min-h-[20px] typing-cursor"></p>
+                </div>
+
+                <!-- LIVE DISPLAY STATS -->
+                <div class="gaming-panel p-3 rounded-lg border border-gaming-neonPurple/40 w-full md:w-auto font-display text-center">
+                    <div class="text-[10px] text-gaming-neonCyan tracking-widest uppercase">CURRENT VIEWPORT</div>
+                    <div id="viewportSize" class="text-lg font-bold text-gaming-neonGreen font-mono">1920 x 1080</div>
+                    <div id="deviceCategory" class="text-[10px] text-gaming-gold uppercase font-bold">DESKTOP HUD MODE</div>
+                </div>
             </div>
-          </article>
-        `;
-      }).join('');
+        </header>
 
-      boardEl.innerHTML = htmlContent;
-    }
+        <!-- RWD TECH FEATURE MATRIX -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            
+            <!-- FEATURE 1 -->
+            <div class="gaming-panel rounded-xl p-5 border border-gaming-neonCyan/30 relative card-active">
+                <div class="tech-corner tc-tl"></div>
+                <div class="tech-corner tc-tr"></div>
+                <div class="tech-corner tc-bl"></div>
+                <div class="tech-corner tc-br"></div>
 
-    function escapeHTML(str) {
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-  </script>
+                <div class="text-gaming-neonCyan font-display text-sm font-bold mb-2 flex items-center gap-2">
+                    <span class="text-gaming-neonGreen">01 //</span> FLUID LAYOUT
+                </div>
+                <h3 class="text-lg font-bold text-white font-sans mb-2">自適應彈性網格</h3>
+                <p class="text-xs text-gray-400 font-mono leading-relaxed">
+                    使用 CSS Grid 與 Flexbox 實現動態縮放，確保介面在 Mobile、Tablet 與 Desktop 都能完美適應。
+                </p>
+            </div>
+
+            <!-- FEATURE 2 -->
+            <div class="gaming-panel rounded-xl p-5 border border-gaming-neonCyan/30 relative card-active">
+                <div class="tech-corner tc-tl"></div>
+                <div class="tech-corner tc-tr"></div>
+                <div class="tech-corner tc-bl"></div>
+                <div class="tech-corner tc-br"></div>
+
+                <div class="text-gaming-neonCyan font-display text-sm font-bold mb-2 flex items-center gap-2">
+                    <span class="text-gaming-neonGreen">02 //</span> BREAKPOINTS
+                </div>
+                <h3 class="text-lg font-bold text-white font-sans mb-2">媒體查詢優化</h3>
+                <p class="text-xs text-gray-400 font-mono leading-relaxed">
+                    精準設定 Tailwind `sm`, `md`, `lg` 中斷點，確保字體大小、內距與佈局隨螢幕寬度無縫切換。
+                </p>
+            </div>
+
+            <!-- FEATURE 3 -->
+            <div class="gaming-panel rounded-xl p-5 border border-gaming-neonCyan/30 relative card-active">
+                <div class="tech-corner tc-tl"></div>
+                <div class="tech-corner tc-tr"></div>
+                <div class="tech-corner tc-bl"></div>
+                <div class="tech-corner tc-br"></div>
+
+                <div class="text-gaming-neonCyan font-display text-sm font-bold mb-2 flex items-center gap-2">
+                    <span class="text-gaming-neonGreen">03 //</span> TOUCH & HUD UI
+                </div>
+                <h3 class="text-lg font-bold text-white font-sans mb-2">行動端操作體驗</h3>
+                <p class="text-xs text-gray-400 font-mono leading-relaxed">
+                    針對行動裝置優化按鈕點擊區域 (Touch Target) 與高對比度 Gaming 視覺，提升直覺控制感。
+                </p>
+            </div>
+        </section>
+
+        <!-- DEMO PRACTICE SHOWCASE -->
+        <section class="gaming-panel rounded-2xl p-6 sm:p-8 border border-gaming-neonCyan/30 relative mb-8">
+            <div class="tech-corner tc-tl"></div>
+            <div class="tech-corner tc-tr"></div>
+            <div class="tech-corner tc-bl"></div>
+            <div class="tech-corner tc-br"></div>
+
+            <h2 class="text-xl font-display font-bold text-white mb-4 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 bg-gaming-neonPink rounded-sm animate-pulse"></span>
+                MISSION DEMO PREVIEW <span class="text-xs font-mono text-gaming-neonCyan/70 font-normal">// 實作展示區</span>
+            </h2>
+
+            <div class="bg-gaming-darkLocked p-4 sm:p-6 rounded-xl border border-gaming-neonCyan/20 text-center font-mono">
+                <div class="inline-block bg-gaming-neonPurple/30 text-gaming-neonCyan border border-gaming-neonPurple/60 px-3 py-1 rounded text-xs mb-4">
+                    RESPONSIVE CONTAINER TEST
+                </div>
+                <p class="text-xs sm:text-sm text-gray-300 max-w-xl mx-auto leading-relaxed mb-6">
+                    請嘗試拖曳瀏覽器視窗大小，觀察頂部 HUD Viewport 即時解析度變化與卡片網格的自動排版效果。
+                </p>
+                
+                <div class="flex justify-center gap-4 flex-wrap text-xs font-display">
+                    <span class="bg-gaming-neonCyan/10 text-gaming-neonCyan border border-gaming-neonCyan/30 px-3 py-1.5 rounded">
+                        MOBILE: &lt; 640px
+                    </span>
+                    <span class="bg-gaming-neonPurple/10 text-gaming-neonPurple border border-gaming-neonPurple/30 px-3 py-1.5 rounded">
+                        TABLET: 640px - 1024px
+                    </span>
+                    <span class="bg-gaming-neonGreen/10 text-gaming-neonGreen border border-gaming-neonGreen/30 px-3 py-1.5 rounded">
+                        DESKTOP: &gt; 1024px
+                    </span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="relative z-20 py-6 border-t border-gaming-neonCyan/20 text-center font-display text-xs text-gaming-neonCyan/60 bg-gaming-bg/90">
+        <p>© 2026 STAGE 04 // RESPONSIVE DESIGN GAMING MODULE</p>
+    </footer>
+
+    <script>
+        // --- 1. TYPEWRITER ANIMATION ---
+        const fullText = "MODULE_STATUS // STAGE_04_RWD_SYSTEM_OPERATIONAL";
+        const typewriterEl = document.getElementById("typewriterText");
+        let typeIndex = 0;
+
+        function typeWriter() {
+            if (typeIndex < fullText.length) {
+                typewriterEl.textContent += fullText.charAt(typeIndex);
+                typeIndex++;
+                setTimeout(typeWriter, 35);
+            }
+        }
+
+        // --- 2. LIVE VIEWPORT RESOLUTION DETECTOR ---
+        function updateViewportStats() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            document.getElementById('viewportSize').innerText = `${width} x ${height}`;
+
+            const devCat = document.getElementById('deviceCategory');
+            if (width < 640) {
+                devCat.innerText = "MOBILE HUD MODE";
+                devCat.className = "text-[10px] text-gaming-neonPink uppercase font-bold";
+            } else if (width < 1024) {
+                devCat.innerText = "TABLET HUD MODE";
+                devCat.className = "text-[10px] text-gaming-gold uppercase font-bold";
+            } else {
+                devCat.innerText = "DESKTOP HUD MODE";
+                devCat.className = "text-[10px] text-gaming-neonGreen uppercase font-bold";
+            }
+        }
+        window.addEventListener('resize', updateViewportStats);
+        updateViewportStats();
+
+        // --- 3. AUDIO SYNTHESIZER ---
+        let audioEnabled = true;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            document.getElementById('soundIcon').innerText = audioEnabled ? '🔊' : '🔇';
+            document.getElementById('soundText').innerText = audioEnabled ? 'SFX' : 'MUTED';
+        }
+
+        function playHoverSFX() {
+            if (!audioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.04);
+                
+                gain.gain.setValueAtTime(0.02, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.04);
+            } catch (e) {}
+        }
+
+        function playClickSFX() {
+            if (!audioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.05);
+
+                gain.gain.setValueAtTime(0.04, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.1);
+            } catch (e) {}
+        }
+
+        // --- 4. NEON PARTICLE CANVAS ---
+        const canvas = document.getElementById('dustCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const dustParticles = Array.from({ length: 45 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 2 + 0.5,
+            speedX: (Math.random() - 0.5) * 0.5,
+            speedY: (Math.random() - 0.5) * 0.5,
+            color: Math.random() > 0.5 ? '#00f0ff' : '#00ff66',
+            alpha: Math.random() * 0.5 + 0.2
+        }));
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            dustParticles.forEach(p => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            requestAnimationFrame(animateCanvas);
+        }
+
+        window.onload = function() {
+            typeWriter();
+            animateCanvas();
+        };
+    </script>
 </body>
 </html>
