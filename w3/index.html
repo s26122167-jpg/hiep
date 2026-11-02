@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="dark">
+<html lang="zh-TW" class="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GAMING LAB - 迷因產生器</title>
+  <title>復古風尚 - 自訂迷因產生器</title>
 
-  <!-- Google Fonts: Orbitron, Share Tech Mono, Anton & Noto Serif TC -->
+  <!-- Google Fonts: Playfair Display, Courier Prime, Anton & Noto Serif TC -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Serif+TC:wght@700;900&family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@500;700;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
 
   <!-- CDN html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -21,22 +21,22 @@
       theme: {
         extend: {
           colors: {
-            gaming: {
-              bg: '#0a0b10',          /* 電競暗黑背景 */
-              card: '#12141d',        /* 裝甲面板底色 */
-              border: '#1f2438',      /* 機甲邊框色 */
-              neonCyan: '#00f0ff',    /* 青藍霓虹 */
-              neonPink: '#ff0055',    /* 桃紅霓虹 */
-              neonGreen: '#00ff66',   /* 螢光綠 */
-              accent: '#7000ff',      /* 炫彩紫色 */
-              text: '#f0f4f8',        /* 高亮文字 */
-              muted: '#62708d'        /* 科技灰 */
+            vintage: {
+              bg: '#fbf8f3',        /* 米白復古羊皮紙色 */
+              card: '#ffffff',      /* 卡片純白色 */
+              border: '#e2d7c5',    /* 典雅紙張邊框 */
+              accent: '#c07a50',    /* 暖陶土色 */
+              gold: '#d4a359',      /* 柔和復古金色 */
+              sage: '#8a9a86',      /* 灰綠色 */
+              text: '#2c2825',      /* 深 sepia 墨色 */
+              muted: '#7a7067',     /* 淺棕灰色 */
+              hover: '#b06a40'
             }
           },
           fontFamily: {
-            sans: ['Orbitron', 'Noto Serif TC', 'sans-serif'],
-            mono: ['Share Tech Mono', 'monospace'],
-            meme: ['Anton', 'Noto Serif TC', 'sans-serif']
+            serif: ['Playfair Display', 'Noto Serif TC', 'serif'],
+            mono: ['Courier Prime', 'monospace'],
+            meme: ['Anton', 'Noto Serif TC', 'serif']
           }
         }
       }
@@ -44,30 +44,30 @@
   </script>
 
   <style>
-    /* 全局 Gaming 風格 */
+    /* 全局復古風格 */
     body {
-      font-family: 'Orbitron', 'Noto Serif TC', sans-serif;
-      background-color: #0a0b10;
-      color: #f0f4f8;
+      font-family: 'Noto Serif TC', 'Playfair Display', serif;
+      background-color: #fbf8f3;
+      color: #2c2825;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* 賽博龐克微細線條背景 (Grid background) */
-    .gaming-grid {
+    /* 復古羊皮紙微細網格 background */
+    .vintage-grid {
       background-image:
-        linear-gradient(to right, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 0, 85, 0.05) 1px, transparent 1px);
-      background-size: 32px 32px;
+        linear-gradient(to right, rgba(192, 122, 80, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(192, 122, 80, 0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
     }
 
     /* 迷因字體 */
     .font-meme {
-      font-family: 'Anton', 'Noto Serif TC', sans-serif;
+      font-family: 'Anton', 'Noto Serif TC', serif;
       font-weight: 900;
     }
 
-    /* 文字邊框與陰影 (RGB Glowing Text) */
+    /* 文字邊框與陰影 */
     .meme-text-shadow {
       text-shadow:
         2px 2px 0 var(--stroke-color, #000000),
@@ -78,18 +78,24 @@
         0px -2px 0 var(--stroke-color, #000000),
         2px 0px 0 var(--stroke-color, #000000),
        -2px 0px 0 var(--stroke-color, #000000),
-        0px 0px 12px rgba(0, 240, 255, 0.6);
+        0px 4px 10px rgba(0,0,0,0.5);
     }
 
-    /* Gaming 機甲面板風格 */
-    .gaming-card {
-      background: rgba(18, 20, 29, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid #1f2438;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 240, 255, 0.1);
+    /* 復古紙張面板與浮動動畫 */
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
     }
 
-    /* 霓虹掃掠效果 */
+    .vintage-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid #e2d7c5;
+      box-shadow: 0 10px 25px -5px rgba(180, 160, 140, 0.2), 0 4px 10px rgba(0, 0, 0, 0.03);
+      animation: gentleFloat 7s ease-in-out infinite;
+    }
+
+    /* Shine Sweep 光澤掃過效果 */
     .shine-effect {
       position: relative;
       overflow: hidden;
@@ -99,276 +105,262 @@
       position: absolute;
       top: 0; left: -100%;
       width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.3), transparent);
-      transition: 0.5s ease;
+      background: linear-gradient(90deg, transparent, rgba(212, 163, 89, 0.25), transparent);
+      transition: 0.6s ease;
     }
     .shine-effect:hover::before {
       left: 100%;
     }
 
-    /* RGB Glow 按鈕 */
-    .btn-gaming {
-      background: linear-gradient(135deg, #00f0ff 0%, #7000ff 50%, #ff0055 100%);
-      background-size: 200% 200%;
-      animation: rgbGradient 4s ease infinite;
+    /* 按鈕樣式 */
+    .btn-vintage {
+      background: linear-gradient(135deg, #c07a50 0%, #d4a359 100%);
       color: #ffffff;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
       transition: all 0.3s ease;
     }
-    @keyframes rgbGradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .btn-vintage:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 8px 20px rgba(192, 122, 80, 0.35);
     }
-    .btn-gaming:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
-    }
-    .btn-gaming:active {
+    .btn-vintage:active {
       transform: translateY(0) scale(0.98);
     }
 
-    /* 科技感旋轉 HUD 圈 */
+    /* 印章旋轉動畫 */
     @keyframes slowSpin {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
     .seal-spin {
-      animation: slowSpin 12s linear infinite;
+      animation: slowSpin 20s linear infinite;
     }
 
-    /* 電競游標 Cursor */
+    /* 打字機游標 */
     .typing-cursor::after {
-      content: '_';
-      animation: blink 0.6s infinite;
-      color: #00f0ff;
+      content: '|';
+      animation: blink 0.8s infinite;
+      color: #c07a50;
     }
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
 
-    /* 霓虹滑桿樣式 */
+    /* 滑桿樣式 */
     input[type=range] {
-      accent-color: #00f0ff;
+      accent-color: #c07a50;
     }
 
-    /* 自訂電競滾動條 */
+    /* 自訂滾動條 */
     ::-webkit-scrollbar {
-      width: 6px;
+      width: 8px;
     }
     ::-webkit-scrollbar-track {
-      background: #0a0b10;
+      background: #fbf8f3;
     }
     ::-webkit-scrollbar-thumb {
-      background: #00f0ff;
-      border-radius: 3px;
-      box-shadow: 0 0 8px #00f0ff;
+      background: #d4a359;
+      border-radius: 4px;
     }
 
-    /* 機甲切角邊框 */
-    .gaming-corner {
+    /* 復古花邊角框 */
+    .vintage-corner {
       position: absolute;
-      width: 10px;
-      height: 10px;
-      border-color: #00f0ff;
+      width: 8px;
+      height: 8px;
+      border-color: #c07a50;
       transition: all 0.3s ease;
     }
-    .g-tl { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
-    .g-tr { top: -1px; right: -1px; border-top: 2px solid; border-right: 2px solid; }
-    .g-bl { bottom: -1px; left: -1px; border-bottom: 2px solid; border-left: 2px solid; }
-    .g-br { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; }
+    .v-tl { top: 6px; left: 6px; border-top: 1px solid; border-left: 1px solid; }
+    .v-tr { top: 6px; right: 6px; border-top: 1px solid; border-right: 1px solid; }
+    .v-bl { bottom: 6px; left: 6px; border-bottom: 1px solid; border-left: 1px solid; }
+    .v-br { bottom: 6px; right: 6px; border-bottom: 1px solid; border-right: 1px solid; }
 
-    .gaming-card:hover .gaming-corner {
-      width: 16px;
-      height: 16px;
-      border-color: #ff0055;
-      box-shadow: 0 0 8px #ff0055;
+    .vintage-card:hover .vintage-corner {
+      width: 12px;
+      height: 12px;
     }
   </style>
 </head>
-<body class="flex flex-col min-h-screen gaming-grid selection:bg-gaming-neonCyan selection:text-black">
+<body class="flex flex-col min-h-screen vintage-grid selection:bg-vintage-accent selection:text-white">
 
-  <!-- Particle Dust Canvas -->
+  <!-- 粒子特效 Canvas -->
   <canvas id="dustCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
 
-  <!-- ==================== Header ==================== -->
-  <header class="border-b border-gaming-border bg-gaming-card/80 backdrop-blur-md sticky top-0 z-40">
+  <!-- ==================== 頁首標題區 ==================== -->
+  <header class="border-b border-vintage-border bg-white/80 backdrop-blur-md sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-gaming-bg border border-gaming-neonCyan flex items-center justify-center text-gaming-neonCyan font-mono font-bold text-xl shadow-[0_0_10px_rgba(0,240,255,0.4)] transform hover:rotate-12 transition-transform">
-          🎮
+        <div class="w-10 h-10 rounded-xl bg-vintage-bg border border-vintage-border flex items-center justify-center text-vintage-accent font-serif font-bold text-xl shadow-sm transform hover:rotate-12 transition-transform">
+          📷
         </div>
         <div>
-          <h1 class="text-xl md:text-2xl font-sans font-black tracking-wider text-gaming-text flex items-center gap-2">
-            CYBER MEME <span class="text-gaming-neonCyan font-mono text-base md:text-lg">// LAB v2.6</span>
+          <h1 class="text-xl md:text-2xl font-serif font-bold tracking-wide text-vintage-text">
+            復古經典 <span class="text-vintage-accent font-mono text-lg md:text-xl">// 迷因產生器</span>
           </h1>
-          <p id="typewriterText" class="text-[11px] text-gaming-neonGreen -mt-0.5 font-mono min-h-[16px] typing-cursor"></p>
+          <p id="typewriterText" class="text-[11px] text-vintage-muted -mt-0.5 font-mono min-h-[16px] typing-cursor"></p>
         </div>
       </div>
-      <span class="text-xs px-3 py-1 rounded-sm bg-gaming-bg text-gaming-neonPink font-mono border border-gaming-neonPink/40 shadow-[0_0_8px_rgba(255,0,85,0.3)] flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-gaming-neonPink animate-ping"></span>
-        SYSTEM READY
+      <span class="text-xs px-3 py-1 rounded-full bg-vintage-bg text-vintage-accent font-mono border border-vintage-border shadow-sm flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-vintage-accent animate-ping"></span>
+        繁體中文典雅版
       </span>
     </div>
   </header>
 
-  <!-- ==================== Main Content ==================== -->
+  <!-- ==================== 主內容區 ==================== -->
   <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
 
-    <!-- ==================== Controls Panel (Left) ==================== -->
-    <section class="lg:col-span-5 flex flex-col gap-5 p-5 md:p-6 rounded-xl gaming-card relative border border-gaming-border">
-      <div class="gaming-corner g-tl"></div>
-      <div class="gaming-corner g-tr"></div>
-      <div class="gaming-corner g-bl"></div>
-      <div class="gaming-corner g-br"></div>
+    <!-- ==================== 控制面板區 (左側) ==================== -->
+    <section class="lg:col-span-5 flex flex-col gap-5 p-5 md:p-6 rounded-2xl vintage-card relative">
+      <div class="vintage-corner v-tl"></div>
+      <div class="vintage-corner v-tr"></div>
+      <div class="vintage-corner v-bl"></div>
+      <div class="vintage-corner v-br"></div>
 
-      <div class="border-b border-gaming-border pb-3 flex items-center justify-between">
-        <h2 class="text-sm font-mono font-bold text-gaming-neonCyan flex items-center gap-2 tracking-widest">
-          [CONTROL PANEL]
+      <div class="border-b border-vintage-border pb-3 flex items-center justify-between">
+        <h2 class="text-base font-serif font-bold text-vintage-text flex items-center gap-2">
+          ⚙️ 控制面板 (CONTROLS)
         </h2>
-        <span class="text-xs text-gaming-muted font-mono">LIVE_UPDATE: ON</span>
+        <span class="text-xs text-vintage-accent font-mono">即時編輯預覽</span>
       </div>
 
-      <!-- 1. Upload Base Image -->
+      <!-- 1. 上傳底圖區 -->
       <div class="space-y-1.5">
-        <label class="block text-xs font-mono font-bold text-gaming-text">1. LOAD_BASE_IMAGE (選擇圖檔)</label>
-        <div id="drop-zone" class="border border-dashed border-gaming-border hover:border-gaming-neonCyan rounded-lg p-4 text-center cursor-pointer bg-gaming-bg/60 hover:bg-gaming-bg transition-all relative group shine-effect">
-          <input type="file" id="image-loader" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+        <label class="block text-xs font-serif font-bold text-vintage-text">1. 上傳底圖（選擇本機檔案）</label>
+        <div id="drop-zone" class="border-2 border-dashed border-vintage-border hover:border-vintage-accent rounded-xl p-4 text-center cursor-pointer bg-vintage-bg/50 hover:bg-vintage-bg transition-all relative group shine-effect">
+          <input type="file" id="image-loader" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
           <div class="space-y-1 pointer-events-none">
-            <div class="w-10 h-10 mx-auto rounded-lg bg-gaming-card flex items-center justify-center text-gaming-neonCyan shadow-sm group-hover:scale-110 transition-transform border border-gaming-border group-hover:border-gaming-neonCyan">
-              📁
+            <div class="w-10 h-10 mx-auto rounded-full bg-white flex items-center justify-center text-vintage-accent shadow-sm group-hover:scale-110 transition-transform border border-vintage-border text-lg">
+              🖼️
             </div>
-            <p class="text-xs font-mono font-bold text-gaming-text">拖放圖片至此處或點擊上傳</p>
-            <p class="text-[10px] text-gaming-muted font-mono">SUPPORTED: PNG, JPG, WEBP</p>
+            <p class="text-xs font-serif font-bold text-vintage-text">點擊此處或拖放圖片至此</p>
+            <p class="text-[11px] text-vintage-muted font-mono">支援 PNG、JPG、WEBP 格式</p>
           </div>
         </div>
       </div>
 
-      <!-- 2. Text Input -->
+      <!-- 2. 文字輸入框 -->
       <div class="space-y-3">
         <div>
-          <label for="top-text-input" class="block text-xs font-mono font-bold text-gaming-text mb-1">2. TOP_TEXT (上方文字)</label>
-          <input type="text" id="top-text-input" value="當你開招試圖一打五" placeholder="請輸入上方文字..."
-            class="w-full bg-gaming-bg border border-gaming-border focus:border-gaming-neonCyan focus:shadow-[0_0_10px_rgba(0,240,255,0.3)] rounded-md px-3.5 py-2 text-sm text-gaming-text outline-none transition-all font-sans">
+          <label for="top-text-input" class="block text-xs font-serif font-bold text-vintage-text mb-1">2. 上方文字 (Top Text)</label>
+          <input type="text" id="top-text-input" value="當你試著在週五下午完成工作" placeholder="請輸入上方文字..."
+            class="w-full bg-white border border-vintage-border focus:border-vintage-accent rounded-lg px-3.5 py-2 text-sm text-vintage-text outline-none transition-all shadow-sm font-serif">
         </div>
 
         <div>
-          <label for="bottom-text-input" class="block text-xs font-mono font-bold text-gaming-text mb-1">3. BOTTOM_TEXT (下方文字)</label>
-          <input type="text" id="bottom-text-input" value="結果發現隊友都在打野" placeholder="請輸入下方文字..."
-            class="w-full bg-gaming-bg border border-gaming-border focus:border-gaming-neonCyan focus:shadow-[0_0_10px_rgba(0,240,255,0.3)] rounded-md px-3.5 py-2 text-sm text-gaming-text outline-none transition-all font-sans">
+          <label for="bottom-text-input" class="block text-xs font-serif font-bold text-vintage-text mb-1">3. 下方文字 (Bottom Text)</label>
+          <input type="text" id="bottom-text-input" value="但生活給了你滿滿的可愛能量" placeholder="請輸入下方文字..."
+            class="w-full bg-white border border-vintage-border focus:border-vintage-accent rounded-lg px-3.5 py-2 text-sm text-vintage-text outline-none transition-all shadow-sm font-serif">
         </div>
       </div>
 
-      <!-- 3. Fine-tuning Sliders -->
-      <div class="space-y-3.5 pt-2 border-t border-gaming-border">
-        <h3 class="text-xs font-mono font-bold text-gaming-neonPink flex items-center gap-1.5 tracking-wider">
-          [ADJUSTMENTS]
+      <!-- 3. 滑桿控制項 -->
+      <div class="space-y-3.5 pt-2 border-t border-vintage-border">
+        <h3 class="text-xs font-serif font-bold text-vintage-text flex items-center gap-1.5">
+          🎨 文字細節微調 (ADJUSTMENTS)
         </h3>
 
-        <!-- Font Size Slider -->
+        <!-- 滑桿：字體大小 -->
         <div>
-          <div class="flex justify-between text-xs text-gaming-muted mb-1 font-mono">
-            <span>FONT_SIZE</span>
-            <span id="font-size-val" class="font-bold text-gaming-neonCyan">38px</span>
+          <div class="flex justify-between text-xs text-vintage-muted mb-1 font-mono">
+            <span>字體大小 (Font Size)</span>
+            <span id="font-size-val" class="font-bold text-vintage-accent">38px</span>
           </div>
-          <input type="range" id="font-size-slider" min="16" max="80" value="38" class="w-full h-1 bg-gaming-border rounded-lg cursor-pointer">
+          <input type="range" id="font-size-slider" min="16" max="80" value="38" class="w-full h-1.5 bg-vintage-border rounded-lg cursor-pointer">
         </div>
 
-        <!-- Top Position Slider -->
+        <!-- 滑桿：上方文字垂直位置 -->
         <div>
-          <div class="flex justify-between text-xs text-gaming-muted mb-1 font-mono">
-            <span>TOP_POS</span>
-            <span id="top-pos-val" class="font-bold text-gaming-neonCyan">5%</span>
+          <div class="flex justify-between text-xs text-vintage-muted mb-1 font-mono">
+            <span>上方文字位置 (Top Pos)</span>
+            <span id="top-pos-val" class="font-bold text-vintage-accent">5%</span>
           </div>
-          <input type="range" id="top-pos-slider" min="0" max="45" value="5" class="w-full h-1 bg-gaming-border rounded-lg cursor-pointer">
+          <input type="range" id="top-pos-slider" min="0" max="45" value="5" class="w-full h-1.5 bg-vintage-border rounded-lg cursor-pointer">
         </div>
 
-        <!-- Bottom Position Slider -->
+        <!-- 滑桿：下方文字垂直位置 -->
         <div>
-          <div class="flex justify-between text-xs text-gaming-muted mb-1 font-mono">
-            <span>BOTTOM_POS</span>
-            <span id="bottom-pos-val" class="font-bold text-gaming-neonCyan">5%</span>
+          <div class="flex justify-between text-xs text-vintage-muted mb-1 font-mono">
+            <span>下方文字位置 (Bottom Pos)</span>
+            <span id="bottom-pos-val" class="font-bold text-vintage-accent">5%</span>
           </div>
-          <input type="range" id="bottom-pos-slider" min="0" max="45" value="5" class="w-full h-1 bg-gaming-border rounded-lg cursor-pointer">
+          <input type="range" id="bottom-pos-slider" min="0" max="45" value="5" class="w-full h-1.5 bg-vintage-border rounded-lg cursor-pointer">
         </div>
 
-        <!-- Color Pickers -->
+        <!-- 文字與描邊色彩選擇器 -->
         <div class="grid grid-cols-2 gap-3 pt-1">
-          <div class="flex items-center gap-2 bg-gaming-bg/80 p-2 rounded border border-gaming-border">
+          <div class="flex items-center gap-2 bg-white/90 p-2 rounded-lg border border-vintage-border">
             <input type="color" id="text-color-picker" value="#ffffff" class="w-7 h-7 rounded border-0 bg-transparent cursor-pointer">
-            <label for="text-color-picker" class="text-xs font-mono text-gaming-text">TEXT_COLOR</label>
+            <label for="text-color-picker" class="text-xs font-serif font-bold text-vintage-text cursor-pointer">文字顏色</label>
           </div>
-          <div class="flex items-center gap-2 bg-gaming-bg/80 p-2 rounded border border-gaming-border">
+          <div class="flex items-center gap-2 bg-white/90 p-2 rounded-lg border border-vintage-border">
             <input type="color" id="stroke-color-picker" value="#000000" class="w-7 h-7 rounded border-0 bg-transparent cursor-pointer">
-            <label for="stroke-color-picker" class="text-xs font-mono text-gaming-text">STROKE_COLOR</label>
+            <label for="stroke-color-picker" class="text-xs font-serif font-bold text-vintage-text cursor-pointer">描邊顏色</label>
           </div>
         </div>
       </div>
 
-      <!-- 4. Export Button -->
+      <!-- 4. 一鍵下載按鈕 -->
       <div class="pt-2 mt-auto">
-        <button id="download-btn" class="w-full btn-gaming py-3 px-6 rounded-md flex items-center justify-center gap-2 shadow-lg cursor-pointer text-sm shine-effect font-mono font-bold">
-          <span>⚡</span>
-          <span>EXPORT MEME (GENERATE)</span>
+        <button id="download-btn" class="w-full btn-vintage font-serif font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 shadow-md cursor-pointer text-sm shine-effect">
+          💾 <span>匯出復古迷因 (Download Meme)</span>
         </button>
       </div>
     </section>
 
-    <!-- ==================== Preview Area (Right) ==================== -->
-    <section class="lg:col-span-7 flex flex-col items-center justify-center p-4 md:p-6 rounded-xl gaming-card min-h-[420px] relative border border-gaming-border">
-      <div class="gaming-corner g-tl"></div>
-      <div class="gaming-corner g-tr"></div>
-      <div class="gaming-corner g-bl"></div>
-      <div class="gaming-corner g-br"></div>
+    <!-- ==================== 迷因即時預覽區 (右側) ==================== -->
+    <section class="lg:col-span-7 flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl vintage-card min-h-[420px] relative">
+      <div class="vintage-corner v-tl"></div>
+      <div class="vintage-corner v-tr"></div>
+      <div class="vintage-corner v-bl"></div>
+      <div class="vintage-corner v-br"></div>
 
       <div class="w-full flex items-center justify-between mb-3 px-1">
-        <span class="text-xs font-mono font-bold text-gaming-text flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-gaming-neonGreen animate-ping"></span>
-          PREVIEW_CANVAS [RENDERER]
+        <span class="text-xs font-serif font-bold text-vintage-text flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-vintage-accent animate-bounce"></span>
+          即時畫布預覽 (PREVIEW CANVAS)
         </span>
-        <span class="text-[10px] font-mono text-gaming-neonCyan bg-gaming-bg px-2.5 py-0.5 rounded border border-gaming-neonCyan/30">
-          AUTO_FIT_ASPECT
+        <span class="text-[11px] font-mono text-vintage-accent bg-vintage-bg px-2.5 py-0.5 rounded-full border border-vintage-border">
+          比例自動居中
         </span>
       </div>
 
-      <!-- Meme Container -->
-      <div id="meme-container" class="relative max-w-full overflow-hidden rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.8)] bg-black flex items-center justify-center border border-gaming-border select-none shine-effect group">
-        <!-- Default Meme Image -->
-        <img id="meme-image" src="https://i.postimg.cc/Gt2rsct9/images.jpg" alt="迷因底圖" class="max-h-[62vh] w-auto object-contain block transition-transform duration-500 group-hover:scale-[1.01]">
+      <!-- 迷因畫面區域 -->
+      <div id="meme-container" class="relative max-w-full overflow-hidden rounded-xl shadow-lg bg-white flex items-center justify-center border border-vintage-border select-none shine-effect group">
+        <!-- 預設迷因底圖 -->
+        <img id="meme-image" src="https://i.postimg.cc/Gt2rsct9/images.jpg" crossorigin="anonymous" alt="迷因底圖" class="max-h-[62vh] w-auto object-contain block transition-transform duration-500 group-hover:scale-[1.01]">
 
-        <!-- Top Text Display -->
+        <!-- 顯示於底圖上的上方文字 -->
         <div id="top-text-display" class="absolute top-[5%] left-0 right-0 px-4 text-center font-meme text-white tracking-wide uppercase leading-tight meme-text-shadow break-words pointer-events-none" style="font-size: 38px;">
-          當你開招試圖一打五
+          當你試著在週五下午完成工作
         </div>
 
-        <!-- Bottom Text Display -->
+        <!-- 顯示於底圖上的下方文字 -->
         <div id="bottom-text-display" class="absolute bottom-[5%] left-0 right-0 px-4 text-center font-meme text-white tracking-wide uppercase leading-tight meme-text-shadow break-words pointer-events-none" style="font-size: 38px;">
-          結果發現隊友都在打野
+          但生活給了你滿滿的可愛能量
         </div>
 
-        <!-- Cyber HUD Seal -->
-        <div class="absolute bottom-3 right-3 pointer-events-none opacity-80 z-20 w-12 h-12 rounded-full border border-gaming-neonCyan/40 bg-gaming-bg/80 backdrop-blur-sm p-0.5 flex items-center justify-center">
-          <svg class="w-full h-full text-gaming-neonCyan seal-spin" viewBox="0 0 100 100">
+        <!-- 印章標籤圖案 -->
+        <div class="absolute bottom-3 right-3 pointer-events-none opacity-80 z-20 w-12 h-12 rounded-full border border-vintage-accent/40 bg-vintage-bg/60 backdrop-blur-sm p-0.5 flex items-center justify-center">
+          <svg class="w-full h-full text-vintage-accent seal-spin" viewBox="0 0 100 100">
             <path id="sealPath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none"/>
-            <text font-size="11.5" font-family="Share Tech Mono" fill="currentColor" letter-spacing="2">
-              <textPath href="#sealPath">• CYBER MEME • GAMING LAB </textPath>
+            <text font-size="11.5" font-family="Courier Prime" fill="currentColor" letter-spacing="2">
+              <textPath href="#sealPath">• VINTAGE MEME • CREATOR </textPath>
             </text>
           </svg>
-          <span class="font-mono text-[8px] font-bold text-gaming-neonPink absolute">FPS:60</span>
+          <span class="font-mono text-[9px] font-bold text-vintage-accent absolute">1988</span>
         </div>
       </div>
     </section>
 
   </main>
 
-  <footer class="border-t border-gaming-border bg-gaming-card/40 py-3.5 text-center text-xs font-mono text-gaming-muted relative z-10">
-    <p>© 2026 CYBER MEME LAB • POWERED BY GAMING ENGINE</p>
+  <footer class="border-t border-vintage-border bg-white/50 py-3.5 text-center text-xs font-mono text-vintage-muted relative z-10">
+    <p>© 2026 復古典雅迷因產生器 • VINTAGE MEME MAKER</p>
   </footer>
 
-  <!-- ==================== JavaScript Interactions & Effects ==================== -->
+  <!-- ==================== JavaScript 動態互動與效果 ==================== -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Elements
@@ -393,8 +385,8 @@
       const downloadBtn = document.getElementById('download-btn');
       const dropZone = document.getElementById('drop-zone');
 
-      // --- 1. TYPEWRITER ANIMATION ---
-      const fullText = "GAMING_ENGINE_INITIALIZED // MEME_GENERATOR_READY";
+      // --- 1. 打字機特效 ---
+      const fullText = "CLASSIC MEME GENERATOR • 典雅日誌風格";
       const typewriterEl = document.getElementById("typewriterText");
       let typeIndex = 0;
 
@@ -402,31 +394,33 @@
         if (typeIndex < fullText.length) {
           typewriterEl.textContent += fullText.charAt(typeIndex);
           typeIndex++;
-          setTimeout(typeWriter, 50);
+          setTimeout(typeWriter, 60);
         }
       }
       typeWriter();
 
-      // --- 2. WEB AUDIO SOUND EFFECTS (Arcade Beep) ---
+      // --- 2. 點擊音效 (Web Audio API) ---
       let audioCtx = null;
       function playSoftClickSFX() {
         try {
           if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.05);
-          gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(360, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(520, audioCtx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           osc.start();
-          osc.stop(audioCtx.currentTime + 0.05);
+          osc.stop(audioCtx.currentTime + 0.08);
         } catch(e) {}
       }
 
-      // --- 3. DUST & CLICK PARTICLES CANVAS (CYBER RGB SPARKS) ---
+      // --- 3. 點擊爆裂粒子特效 ---
       const canvas = document.getElementById('dustCanvas');
       const ctx = canvas.getContext('2d');
 
@@ -443,18 +437,16 @@
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        const colors = ['#00f0ff', '#ff0055', '#00ff66', '#7000ff'];
-
-        for (let i = 0; i < 16; i++) {
+        for (let i = 0; i < 14; i++) {
           const angle = Math.random() * Math.PI * 2;
-          const speed = Math.random() * 4 + 2;
+          const speed = Math.random() * 3 + 1.2;
           burstParticles.push({
             x: x,
             y: y,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
             size: Math.random() * 3 + 1,
-            color: colors[Math.floor(Math.random() * colors.length)],
+            color: Math.random() > 0.5 ? '#c07a50' : '#d4a359',
             alpha: 1
           });
         }
@@ -470,8 +462,8 @@
           let bp = burstParticles[i];
           bp.x += bp.vx;
           bp.y += bp.vy;
-          bp.vy += 0.05;
-          bp.alpha -= 0.03;
+          bp.vy += 0.04;
+          bp.alpha -= 0.025;
 
           if (bp.alpha <= 0) {
             burstParticles.splice(i, 1);
@@ -481,8 +473,6 @@
           ctx.save();
           ctx.globalAlpha = Math.max(0, bp.alpha);
           ctx.fillStyle = bp.color;
-          ctx.shadowBlur = 8;
-          ctx.shadowColor = bp.color;
           ctx.beginPath();
           ctx.arc(bp.x, bp.y, bp.size, 0, Math.PI * 2);
           ctx.fill();
@@ -492,7 +482,7 @@
       }
       animateCanvas();
 
-      // --- 4. MEME GENERATOR INTERACTION LOGIC ---
+      // --- 4. 迷因控制項監聽 ---
       topTextInput.addEventListener('input', (e) => {
         topTextDisplay.textContent = e.target.value || '';
       });
@@ -530,6 +520,7 @@
         bottomTextDisplay.style.setProperty('--stroke-color', e.target.value);
       });
 
+      // --- 圖片上傳與拖放 ---
       function handleFile(file) {
         if (file && file.type.startsWith('image/')) {
           playSoftClickSFX();
@@ -548,14 +539,14 @@
       ['dragenter', 'dragover'].forEach(eventName => {
         dropZone.addEventListener(eventName, (e) => {
           e.preventDefault();
-          dropZone.classList.add('border-gaming-neonCyan', 'bg-gaming-bg');
+          dropZone.classList.add('border-vintage-accent', 'bg-vintage-bg');
         }, false);
       });
 
       ['dragleave', 'drop'].forEach(eventName => {
         dropZone.addEventListener(eventName, (e) => {
           e.preventDefault();
-          dropZone.classList.remove('border-gaming-neonCyan', 'bg-gaming-bg');
+          dropZone.classList.remove('border-vintage-accent', 'bg-vintage-bg');
         }, false);
       });
 
@@ -565,28 +556,29 @@
         handleFile(files[0]);
       });
 
-      // --- 5. EXPORT / DOWNLOAD MEME ---
+      // --- 5. 迷因圖片匯出 ---
       downloadBtn.addEventListener('click', (e) => {
         playSoftClickSFX();
-        downloadBtn.innerHTML = '<span>⏳</span><span>PROCESSING...</span>';
+        downloadBtn.innerHTML = '⌛ <span>處理中...</span>';
         downloadBtn.disabled = true;
 
         html2canvas(memeContainer, {
           useCORS: true,
+          allowTaint: true,
           scale: 2,
           backgroundColor: null
         }).then(canvas => {
           const link = document.createElement('a');
-          link.download = 'cyber-meme.png';
+          link.download = 'vintage-meme.png';
           link.href = canvas.toDataURL('image/png');
           link.click();
 
-          downloadBtn.innerHTML = '<span>⚡</span><span>EXPORT MEME (GENERATE)</span>';
+          downloadBtn.innerHTML = '💾 <span>匯出復古迷因 (Download Meme)</span>';
           downloadBtn.disabled = false;
         }).catch(err => {
           console.error(err);
-          alert('Error exporting meme image.');
-          downloadBtn.innerHTML = '<span>⚡</span><span>EXPORT MEME (GENERATE)</span>';
+          alert('下載圖片時發生錯誤，請稍後重試。');
+          downloadBtn.innerHTML = '💾 <span>匯出復古迷因 (Download Meme)</span>';
           downloadBtn.disabled = false;
         });
       });
