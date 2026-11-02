@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鄧友盛26122162 | 個人數位名片</title>
+    
+    <!-- 1. 瀏覽器分頁圖示 (Favicon) -->
+    <link rel="icon" href="https://i.postimg.cc/C5ZZVKNx/unnamed-(1).jpg" type="image/jpeg">
+
+    <!-- 2. 社群分享預覽圖 (Open Graph) -->
+    <meta property="og:title" content="鄧友盛26122162 | 個人數位名片">
+    <meta property="og:description" content=" 設備維護與自動化探索中，保持熱情、持續優化！">
+    <meta property="og:image" content="https://i.postimg.cc/C5ZZVKNx/unnamed-(1).jpg">
+    
+    <!-- Google Fonts 炫彩電競字型引入 -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- CSS 樣式設定：Gaming 炫彩電競風格 -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
+            background-color: #0b0e14;
+            /* 霓虹背景動態網格感 */
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(255, 0, 127, 0.15) 0%, transparent 40%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 電競卡片主體 */
+        .card {
+            position: relative;
+            background: rgba(18, 22, 31, 0.85);
+            backdrop-filter: blur(12px);
+            width: 100%;
+            max-width: 340px;
+            padding: 40px 25px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.2), inset 0 0 15px rgba(255, 0, 127, 0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        /* 頂部電競炫光線條 */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #00f2fe, #4facfe, #ff007f);
+            box-shadow: 0 0 10px #00f2fe, 0 0 15px #ff007f;
+        }
+
+        .card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: rgba(255, 0, 127, 0.6);
+            box-shadow: 0 0 35px rgba(255, 0, 127, 0.4), 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        /* 頭像框：RGB外發光外框 */
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .avatar-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00f2fe, #ff007f, #4facfe);
+            z-index: 1;
+            animation: spinGlow 4s linear infinite;
+        }
+
+        @keyframes spinGlow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .avatar {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 20%;
+            z-index: 2;
+            border: 3px solid #12161f;
+            display: block;
+        }
+
+        /* 姓名 + 認證勾勾 */
+        .name {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: 900;
+            color: #ffffff;
+            margin: 0 0 10px 0;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        .verified-badge {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 6px #00f2fe);
+        }
+
+        /* 個人簡介 */
+        .bio {
+            font-size: 13px;
+            color: #a0aec0;
+            line-height: 1.6;
+            margin: 0 0 28px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            position: relative;
+            display: block;
+            padding: 14px 0;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        /* Instagram 賽博粉紅按鈕 */
+        .btn-instagram {
+            background: linear-gradient(135deg, #ff007f 0%, #7928ca 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 0, 127, 0.5);
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+        }
+
+        .btn-instagram:hover {
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.8);
+            transform: translateY(-2px);
+            color: #ffffff;
+        }
+
+        /* Email 青藍霓虹按鈕 */
+        .btn-email {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #0b0e14;
+            border: 1px solid rgba(0, 242, 254, 0.5);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+        }
+
+        .btn-email:hover {
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.8);
+            transform: translateY(-2px);
+            color: #0b0e14;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- 個人頭像照片 -->
+        <div class="avatar-wrapper">
+            <img class="avatar" src="https://i.postimg.cc/C5ZZVKNx/unnamed-(1).jpg" alt="鄧友盛的大頭照">
+        </div>
+
+        <!-- 姓名與認證標籤 -->
+        <h1 class="name">
+            鄧友盛26122162
+            <svg class="verified-badge" viewBox="0 0 24 24">
+                <path fill="#00f2fe" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+        </h1>
+        
+        <p class="bio">⚡ 設備維護與自動化探索中<br>保持熱情、持續優化！</p>
+
+        <!-- 聯絡按鈕 -->
+        <div class="button-group">
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" class="btn btn-instagram">
+                Instagram
+            </a>
+            <a href="mailto:your-email@example.com" class="btn btn-email">
+                Email 聯絡我
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
