@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>今天吃什麼？GAMER RANDOMIZER</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Google Fonts (Orbitron for Gaming style & Noto Sans TC) & FontAwesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #0b0f19;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 60%),
+        linear-gradient(rgba(15, 23, 42, 0.8) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.8) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+    }
+
+    .font-gaming {
+      font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
+    }
+
+    /* Cyberpunk / Gaming Glow Effects */
+    .neon-border {
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.4), inset 0 0 15px rgba(6, 182, 212, 0.2);
+    }
+
+    .neon-border-active {
+      box-shadow: 0 0 25px rgba(244, 63, 94, 0.6), inset 0 0 15px rgba(244, 63, 94, 0.3);
+    }
+
+    .neon-text-cyan {
+      text-shadow: 0 0 8px rgba(6, 182, 212, 0.6), 0 0 20px rgba(6, 182, 212, 0.4);
+    }
+
+    .neon-text-pink {
+      text-shadow: 0 0 8px rgba(244, 63, 94, 0.6), 0 0 20px rgba(244, 63, 94, 0.4);
+    }
+
+    /* Animations */
+    @keyframes cyberPulse {
+      0%, 100% {
+        box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), 0 0 30px rgba(139, 92, 246, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 25px rgba(6, 182, 212, 0.8), 0 0 50px rgba(139, 92, 246, 0.6);
+      }
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes slotRoll {
+      0% { transform: translateY(-10px); opacity: 0.6; filter: blur(2px); }
+      50% { transform: translateY(10px); opacity: 0.8; filter: blur(1px); }
+      100% { transform: translateY(0); opacity: 1; filter: blur(0); }
+    }
+
+    .animate-glitch {
+      animation: glitch 0.2s ease infinite;
+    }
+
+    .animate-slot {
+      animation: slotRoll 0.08s linear infinite;
+    }
+
+    .glow-button {
+      animation: cyberPulse 2s infinite;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #06b6d4;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b82f6;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 sm:p-6 text-slate-100 selection:bg-cyan-500 selection:text-black">
+
+  <!-- Header -->
+  <header class="w-full max-w-md flex justify-between items-center mb-4">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.3)]">
+        <i class="fa-solid fa-gamepad text-xl"></i>
+      </div>
+      <div>
+        <h1 class="font-gaming font-black text-xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 tracking-wider uppercase">
+          FOOD QUEST <span class="text-xs px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">v2.0</span>
+        </h1>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button id="soundToggleBtn" class="p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-cyan-400 hover:border-cyan-400 hover:shadow-[0_0_10px_rgba(6,182,212,0.4)] transition-all" title="Audio Toggle">
+        <i class="fa-solid fa-volume-high text-base"></i>
+      </button>
+      <button id="menuModalBtn" class="p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-cyan-400 hover:border-cyan-400 hover:shadow-[0_0_10px_rgba(6,182,212,0.4)] transition-all" title="Inventory / Menu">
+        <i class="fa-solid fa-bars-staggered text-base"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Card -->
+  <main class="w-full max-w-md bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-cyan-500/30 neon-border flex flex-col items-center text-center relative overflow-hidden my-auto transition-all duration-300">
+    
+    <!-- Top Cyber Accent Bar -->
+    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-indigo-500 to-pink-500"></div>
+
+    <!-- Title Container -->
+    <div id="titleContainer" class="w-full min-h-[110px] flex flex-col justify-center items-center my-2">
+      <div class="text-[10px] font-gaming font-bold tracking-widest text-cyan-400/70 uppercase mb-1 flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span> SYSTEM READY
+      </div>
+      <h2 id="mainTitle" class="text-3xl sm:text-4xl font-black text-cyan-300 tracking-wider transition-all duration-300 neon-text-cyan">
+        今天吃什麼？
+      </h2>
+      <p id="subTitle" class="text-slate-400 font-medium text-xs sm:text-sm mt-2 flex items-center gap-1.5">
+        <i class="fa-solid fa-crosshairs text-cyan-400"></i> Press START to ROLL your loot!
+      </p>
+    </div>
+
+    <!-- Image Wrapper -->
+    <div id="imageWrapper" class="hidden w-full my-4 relative group">
+      <div class="w-full h-48 sm:h-56 rounded-2xl overflow-hidden border-2 border-pink-500/60 shadow-[0_0_20px_rgba(244,63,94,0.3)] bg-slate-950 relative">
+        <img id="foodImage" src="" alt="Food Preview" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90 group-hover:opacity-100">
+        <div id="foodBadge" class="absolute top-3 left-3 bg-slate-950/90 text-pink-400 border border-pink-500/50 font-gaming font-bold text-[11px] px-3 py-1 rounded-md shadow-lg backdrop-blur-md flex items-center gap-1.5 uppercase tracking-wider">
+          <i class="fa-solid fa-crown text-yellow-400"></i> LEGENDARY DROP
+        </div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="w-full flex flex-col items-center gap-3 mt-4">
+      <button id="drawBtn" class="glow-button w-full py-4 px-8 bg-gradient-to-r from-cyan-500 via-indigo-600 to-pink-500 hover:from-cyan-400 hover:to-pink-400 text-white font-gaming font-black text-xl sm:text-2xl rounded-2xl shadow-lg transform active:scale-95 transition-all duration-150 flex items-center justify-center gap-3 border border-cyan-300/40 uppercase tracking-wider">
+        <i class="fa-solid fa-dice-d20 text-2xl animate-spin-slow"></i>
+        <span>START ROLL</span>
+      </button>
+
+      <a id="mapBtn" href="#" target="_blank" rel="noopener noreferrer" class="hidden w-full py-3.5 px-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-base sm:text-lg rounded-2xl shadow-[0_0_15px_rgba(16,185,129,0.4)] transform active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 border border-emerald-400/40 uppercase tracking-wider">
+        <i class="fa-solid fa-location-arrow text-cyan-200"></i>
+        <span>WAYPOINT (Google Map)</span>
+      </a>
+    </div>
+
+  </main>
+
+  <!-- History Section -->
+  <section class="w-full max-w-md mt-6">
+    <div class="flex justify-between items-center mb-2 px-2">
+      <h3 class="text-xs font-gaming font-bold text-cyan-400/80 uppercase tracking-widest flex items-center gap-1.5">
+        <i class="fa-solid fa-clock-rotate-left"></i> RECENT LOOT LOG
+      </h3>
+      <button id="clearHistoryBtn" class="text-xs text-slate-500 hover:text-pink-400 transition-colors hidden font-mono">CLEAR LOG</button>
+    </div>
+    <div id="historyList" class="flex gap-2 overflow-x-auto pb-2 px-1 text-sm min-h-[38px] scrollbar-thin">
+      <span class="text-xs text-slate-600 italic px-2 font-mono">No loot records found...</span>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="mt-6 text-center text-xs text-slate-500 font-mono">
+    <p class="flex items-center justify-center gap-1">
+      <i class="fa-solid fa-terminal text-cyan-500"></i> CHOICE MATRIX V2.0 // NO MORE DECISION FATIGUE
+    </p>
+  </footer>
+
+  <!-- Menu Modal -->
+  <div id="menuModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-cyan-500/40 max-h-[85vh] flex flex-col neon-border">
+      <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+        <h3 class="font-gaming font-black text-lg text-cyan-400 flex items-center gap-2 uppercase tracking-wider">
+          <i class="fa-solid fa-boxes-stacked"></i> INVENTORY DATABASE
+        </h3>
+        <button id="closeModalBtn" class="text-slate-400 hover:text-pink-500 text-xl font-bold p-1 transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="addFoodForm" class="flex gap-2 mb-4">
+        <input type="text" id="foodNameInput" placeholder="Item Name (e.g. 丹丹漢堡)" required class="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl focus:outline-none focus:border-cyan-400 text-sm text-slate-200 placeholder-slate-500 font-medium">
+        <button type="submit" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm transition-all font-gaming uppercase shadow-[0_0_10px_rgba(6,182,212,0.4)]">
+          ADD
+        </button>
+      </form>
+
+      <div id="foodItemList" class="flex-1 overflow-y-auto space-y-2 pr-1 my-2"></div>
+
+      <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center">
+        <button id="resetMenuBtn" class="text-xs text-slate-500 hover:text-pink-400 font-mono transition-colors">RESET DATABASE</button>
+        <button id="saveMenuBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-gaming font-bold px-6 py-2 rounded-xl text-sm transition-all border border-indigo-400/30 uppercase tracking-wider">
+          CONFIRM
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80";
+
+      const DEFAULT_FOODS = [
+        {
+          name: "八戒越南咖啡",
+          image: "https://i.postimg.cc/nzX7nTF6/vietnam.webp",
+          url: "https://shorturl.at/iVaXp"
+        },
+        {
+          name: "樹科大奇積雞排（總店）",
+          image: "https://i.postimg.cc/YS9Lx8Wx/garanshude.webp",
+          url: "https://maps.app.goo.gl/Ph42FRzEjfBhK7UG9"
+        },
+        {
+          name: "燕巢風味外省麵",
+          image: "https://i.postimg.cc/6347k3z8/tiemmi.webp",
+          url: "https://maps.app.goo.gl/yUffWBPZQFP8Vig27"
+        },
+        {
+          name: "芳師傅私房菜",
+          image: "https://i.postimg.cc/qR9GSgVR/shen-shui-shi-tang.webp",
+          url: "https://maps.app.goo.gl/2rCUgXzBZFbaGEEh8"
+        },
+        {
+          name: "阿丹鹹酥雞",
+          image: "https://i.postimg.cc/Y9QrNmb0/xian-shu-ji.webp",
+          url: "https://maps.app.goo.gl/LQkaAxmpm7oucB7M8"
+        }
+      ];
+
+      let storedFoods = JSON.parse(localStorage.getItem('my_custom_foods_v3'));
+      let foods = storedFoods || [...DEFAULT_FOODS];
+
+      let history = [];
+      let isDrawing = false;
+      let soundEnabled = true;
+
+      // Web Audio API (Gaming Synthesizer Sound Effects)
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      function playTickSound() {
+        if (!soundEnabled) return;
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.03);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.035);
+        } catch (e) {}
+      }
+
+      function playSuccessSound() {
+        if (!soundEnabled) return;
+        try {
+          const now = audioCtx.currentTime;
+          // Gaming Arpeggio Fanfare
+          const notes = [440.00, 554.37, 659.25, 880.00, 1108.73, 1318.51];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+            gain.gain.setValueAtTime(0.12, now + idx * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.06);
+            osc.stop(now + idx * 0.06 + 0.28);
+          });
+        } catch (e) {}
+      }
+
+      // DOM Elements
+      const mainTitle = document.getElementById('mainTitle');
+      const subTitle = document.getElementById('subTitle');
+      const drawBtn = document.getElementById('drawBtn');
+      const mapBtn = document.getElementById('mapBtn');
+      const imageWrapper = document.getElementById('imageWrapper');
+      const foodImage = document.getElementById('foodImage');
+      const historyList = document.getElementById('historyList');
+      const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+      const soundToggleBtn = document.getElementById('soundToggleBtn');
+
+      const menuModal = document.getElementById('menuModal');
+      const menuModalBtn = document.getElementById('menuModalBtn');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const saveMenuBtn = document.getElementById('saveMenuBtn');
+      const resetMenuBtn = document.getElementById('resetMenuBtn');
+      const addFoodForm = document.getElementById('addFoodForm');
+      const foodNameInput = document.getElementById('foodNameInput');
+      const foodItemList = document.getElementById('foodItemList');
+
+      foodImage.addEventListener('error', function() {
+        this.src = FALLBACK_IMAGE;
+      });
+
+      function startDraw() {
+        if (isDrawing) return;
+        if (foods.length === 0) {
+          alert("Inventory is empty! Please add items to database first.");
+          return;
+        }
+
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        isDrawing = true;
+        drawBtn.disabled = true;
+        drawBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+        imageWrapper.classList.add('hidden');
+        mapBtn.classList.add('hidden');
+        subTitle.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-cyan-400"></i> SEARCHING TARGET...`;
+
+        let counter = 0;
+        const totalSteps = 28;
+        const speed = 65;
+
+        const timer = setInterval(() => {
+          const randomIndex = Math.floor(Math.random() * foods.length);
+          const currentItem = foods[randomIndex];
+
+          mainTitle.textContent = currentItem.name;
+          mainTitle.className = "text-3xl sm:text-4xl font-black text-cyan-400 animate-slot font-gaming tracking-wider";
+          playTickSound();
+
+          counter++;
+          if (counter >= totalSteps) {
+            clearInterval(timer);
+            finishDraw(currentItem);
+          }
+        }, speed);
+      }
+
+      function finishDraw(selected) {
+        isDrawing = false;
+        drawBtn.disabled = false;
+        drawBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+        mainTitle.textContent = selected.name;
+        mainTitle.className = "text-4xl sm:text-5xl font-black text-pink-500 animate-glitch neon-text-pink font-gaming tracking-wider";
+        subTitle.innerHTML = `<i class="fa-solid fa-bullseye text-pink-400"></i> TARGET ACQUIRED:`;
+
+        foodImage.src = selected.image || FALLBACK_IMAGE;
+        imageWrapper.classList.remove('hidden');
+
+        mapBtn.href = selected.url || `https://www.google.com/maps/search/${encodeURIComponent(selected.name)}`;
+        mapBtn.classList.remove('hidden');
+
+        playSuccessSound();
+        triggerConfetti();
+        addHistory(selected.name);
+      }
+
+      function triggerConfetti() {
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 90,
+            spread: 70,
+            origin: { y: 0.7 },
+            colors: ['#06b6d4', '#f43f5e', '#a855f7', '#10b981', '#3b82f6']
+          });
+        }
+      }
+
+      function addHistory(name) {
+        history.unshift(name);
+        if (history.length > 5) history.pop();
+        renderHistory();
+      }
+
+      function renderHistory() {
+        if (history.length === 0) {
+          historyList.innerHTML = `<span class="text-xs text-slate-600 italic px-2 font-mono">No loot records found...</span>`;
+          clearHistoryBtn.classList.add('hidden');
+          return;
+        }
+
+        clearHistoryBtn.classList.remove('hidden');
+        historyList.innerHTML = history.map((item, index) => `
+          <span class="inline-flex items-center gap-1.5 bg-slate-900 text-cyan-300 text-xs font-mono font-bold px-3 py-1.5 rounded-lg border border-cyan-500/30 whitespace-nowrap shadow-[0_0_8px_rgba(6,182,212,0.15)]">
+            <span class="text-pink-500 font-gaming">#0${index + 1}</span> ${item}
+          </span>
+        `).join('');
+      }
+
+      function renderMenuList() {
+        foodItemList.innerHTML = foods.map((food, index) => `
+          <div class="flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/50 transition-colors">
+            <span class="font-bold text-slate-200 text-sm pl-1">${food.name}</span>
+            <button data-index="${index}" class="delete-btn text-slate-500 hover:text-pink-500 p-1 rounded-lg hover:bg-slate-900 transition-colors" title="Remove">
+              <i class="fa-solid fa-trash-can text-sm"></i>
+            </button>
+          </div>
+        `).join('');
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const idx = e.currentTarget.getAttribute('data-index');
+            deleteFood(idx);
+          });
+        });
+      }
+
+      function deleteFood(index) {
+        foods.splice(index, 1);
+        saveFoodsToStorage();
+        renderMenuList();
+      }
+
+      function saveFoodsToStorage() {
+        localStorage.setItem('my_custom_foods_v3', JSON.stringify(foods));
+      }
+
+      drawBtn.addEventListener('click', startDraw);
+
+      clearHistoryBtn.addEventListener('click', () => {
+        history = [];
+        renderHistory();
+      });
+
+      soundToggleBtn.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        soundToggleBtn.innerHTML = soundEnabled
+          ? `<i class="fa-solid fa-volume-high text-base"></i>`
+          : `<i class="fa-solid fa-volume-xmark text-base text-slate-600"></i>`;
+      });
+
+      menuModalBtn.addEventListener('click', () => {
+        renderMenuList();
+        menuModal.classList.remove('hidden');
+      });
+
+      closeModalBtn.addEventListener('click', () => menuModal.classList.add('hidden'));
+      saveMenuBtn.addEventListener('click', () => menuModal.classList.add('hidden'));
+
+      addFoodForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newName = foodNameInput.value.trim();
+        if (newName) {
+          foods.push({
+            name: newName,
+            image: FALLBACK_IMAGE,
+            url: `https://www.google.com/maps/search/${encodeURIComponent(newName)}`
+          });
+          saveFoodsToStorage();
+          renderMenuList();
+          foodNameInput.value = '';
+        }
+      });
+
+      resetMenuBtn.addEventListener('click', () => {
+        if (confirm("Reset inventory back to default configuration?")) {
+          foods = [...DEFAULT_FOODS];
+          saveFoodsToStorage();
+          renderMenuList();
+        }
+      });
+
+      menuModal.addEventListener('click', (e) => {
+        if (e.target === menuModal) menuModal.classList.add('hidden');
+      });
+
+    });
+  </script>
+</body>
+</html>
