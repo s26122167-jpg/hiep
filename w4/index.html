@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>復古許願池 - 朋友動態留言板</title>
+
+  <!-- Google Fonts: Playfair Display, Courier Prime & Noto Serif TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@500;700;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            vintage: {
+              bg: '#fbf8f3',        /* 米白復古羊皮紙色 */
+              card: '#ffffff',      /* 卡片純白色 */
+              border: '#e2d7c5',    /* 典雅紙張邊框 */
+              accent: '#c07a50',    /* 暖陶土色 */
+              gold: '#d4a359',      /* 柔和復古金色 */
+              sage: '#8a9a86',      /* 灰綠色 */
+              text: '#2c2825',      /* 深 sepia 墨色 */
+              muted: '#7a7067',     /* 淺棕灰色 */
+              hover: '#b06a40'
+            }
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'Noto Serif TC', 'serif'],
+            mono: ['Courier Prime', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 全局復古風格 */
+    body {
+      font-family: 'Noto Serif TC', 'Playfair Display', serif;
+      background-color: #fbf8f3;
+      color: #2c2825;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 復古羊皮紙微細網格 background */
+    .vintage-grid {
+      background-image:
+        linear-gradient(to right, rgba(192, 122, 80, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(192, 122, 80, 0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* 復古紙張面板與浮動動畫 */
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .vintage-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid #e2d7c5;
+      box-shadow: 0 10px 25px -5px rgba(180, 160, 140, 0.2), 0 4px 10px rgba(0, 0, 0, 0.03);
+      animation: gentleFloat 7s ease-in-out infinite;
+    }
+
+    /* Vệt sáng lướt qua khi di chuột (Shine Sweep) */
+    .shine-effect {
+      position: relative;
+      overflow: hidden;
+    }
+    .shine-effect::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(212, 163, 89, 0.25), transparent);
+      transition: 0.6s ease;
+    }
+    .shine-effect:hover::before {
+      left: 100%;
+    }
+
+    /* Con dấu xoay tròn tự動 */
+    @keyframes slowSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .seal-spin {
+      animation: slowSpin 20s linear infinite;
+    }
+
+    /* Con trỏ máy chữ blink */
+    .typing-cursor::after {
+      content: '|';
+      animation: blink 0.8s infinite;
+      color: #c07a50;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* 自訂滾動條 */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #fbf8f3;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #d4a359;
+      border-radius: 4px;
+    }
+
+    /* 復古角花邊框 */
+    .vintage-corner {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: #c07a50;
+      transition: all 0.3s ease;
+    }
+    .v-tl { top: 6px; left: 6px; border-top: 1px solid; border-left: 1px solid; }
+    .v-tr { top: 6px; right: 6px; border-top: 1px solid; border-right: 1px solid; }
+    .v-bl { bottom: 6px; left: 6px; border-bottom: 1px solid; border-left: 1px solid; }
+    .v-br { bottom: 6px; right: 6px; border-bottom: 1px solid; border-right: 1px solid; }
+
+    .wish-card:hover .vintage-corner {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* 許願卡片 Hover 特效 */
+    .wish-card {
+      transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .wish-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      border-color: #c07a50;
+      box-shadow: 0 14px 30px rgba(192, 122, 80, 0.22);
+    }
+
+    /* 水波/加載圈圈 */
+    .ripple-loader {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+    .ripple-loader div {
+      position: absolute;
+      border: 2px solid #c07a50;
+      opacity: 1;
+      border-radius: 50%;
+      animation: ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+    .ripple-loader div:nth-child(2) {
+      animation-delay: -1s;
+      border-color: #d4a359;
+    }
+    @keyframes ripple {
+      0% { top: 36px; left: 36px; width: 0; height: 0; opacity: 1; }
+      100% { top: 0px; left: 0px; width: 72px; height: 72px; opacity: 0; }
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen vintage-grid selection:bg-vintage-accent selection:text-white">
+
+  <!-- Interactive Dust & Click Burst Canvas -->
+  <canvas id="dustCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+  <!-- ==================== 頁首標題區 ==================== -->
+  <header class="border-b border-vintage-border bg-white/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-vintage-bg border border-vintage-border flex items-center justify-center text-vintage-accent font-serif font-bold text-xl shadow-sm transform hover:rotate-12 transition-transform">
+          📜
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-serif font-bold tracking-wide text-vintage-text">
+            復古許願池 <span class="text-vintage-accent font-mono text-lg md:text-xl">// 朋友悄悄話留言板</span>
+          </h1>
+          <p id="typewriterText" class="text-[11px] text-vintage-muted -mt-0.5 font-mono min-h-[16px] typing-cursor"></p>
+        </div>
+      </div>
+      <span class="text-xs px-3 py-1 rounded-full bg-vintage-bg text-vintage-accent font-mono border border-vintage-border shadow-sm flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-vintage-accent animate-ping"></span>
+        ✒️ 典雅日誌版
+      </span>
+    </div>
+  </header>
+
+  <!-- ==================== 主內容區 ==================== -->
+  <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:p-6 relative z-10 space-y-8">
+
+    <!-- Khu vực nhúng Google Form để gửi lời chúc / 許願表單區 -->
+    <section class="bg-white/90 rounded-2xl p-4 md:p-6 border border-vintage-border shadow-sm relative overflow-hidden">
+      <div class="vintage-corner v-tl"></div>
+      <div class="vintage-corner v-tr"></div>
+      <div class="vintage-corner v-bl"></div>
+      <div class="vintage-corner v-br"></div>
+     
+      <div class="flex items-center justify-between mb-4 border-b border-vintage-border/60 pb-3">
+        <h2 class="font-serif font-bold text-lg text-vintage-text flex items-center gap-2">
+          <i class="fa-solid fa-pen-nib text-vintage-accent"></i> 投遞您的許願金幣 (寫下留言)
+        </h2>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdSXP6DfZGxYmGaN1GKHBJbAaVV_RVXLj-f77FnVcHMfJxgWQ/viewform" target="_blank" class="text-xs font-mono text-vintage-accent hover:underline flex items-center gap-1">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> 在新分頁開啟表單
+        </a>
+      </div>
+
+      <div class="w-full overflow-hidden rounded-xl border border-vintage-border/50 bg-white">
+        <iframe
+          src="https://docs.google.com/forms/d/e/1FAIpQLSdSXP6DfZGxYmGaN1GKHBJbAaVV_RVXLj-f77FnVcHMfJxgWQ/viewform?embedded=true"
+          width="100%"
+          height="650"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          class="w-full"
+        >正在載入表單...</iframe>
+      </div>
+    </section>
+
+    <!-- 載入中動畫 -->
+    <div id="loading" class="flex flex-col items-center justify-center py-20 text-vintage-muted">
+      <div class="ripple-loader mb-4">
+        <div></div>
+        <div></div>
+      </div>
+      <div class="font-serif text-sm tracking-widest text-vintage-accent animate-pulse">正在開啟典雅日誌，讀取留言中...</div>
+    </div>
+
+    <!-- 留言板卡片呈現區 -->
+    <div id="message-board" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" style="display: none;"></div>
+
+  </main>
+
+  <footer class="border-t border-vintage-border bg-white/50 py-3.5 text-center text-xs font-mono text-vintage-muted relative z-10 mt-auto">
+    <p>© 2026 復古典雅許願池 • CLASSIC JOURNAL WISHES</p>
+  </footer>
+
+  <!-- ==================== JavaScript 邏輯 & 動態特效 ==================== -->
+  <script>
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/18joM6HHlNb9ojSSgLQR3ZYxV_pJwoTJXgaiUXMmZvDA/export?format=csv';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      typeWriter();
+      animateCanvas();
+      fetchWishMessages();
+    });
+
+    // --- 1. TYPEWRITER ANIMATION ---
+    const fullText = "CLASSIC WISHING WELL • 投下一枚金幣，傳遞真摯祝福";
+    const typewriterEl = document.getElementById("typewriterText");
+    let typeIndex = 0;
+
+    function typeWriter() {
+      if (typeIndex < fullText.length) {
+        typewriterEl.textContent += fullText.charAt(typeIndex);
+        typeIndex++;
+        setTimeout(typeWriter, 50);
+      }
+    }
+
+    // --- 2. WEB AUDIO SOUND EFFECTS ---
+    let audioCtx = null;
+    function playSoftClickSFX() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(360, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(520, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch(e) {}
+    }
+
+    // --- 3. DUST & CLICK PARTICLES CANVAS ---
+    const canvas = document.getElementById('dustCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    let burstParticles = [];
+    function triggerClickBurst(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      for (let i = 0; i < 14; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 3 + 1.2;
+        burstParticles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 3 + 1,
+          color: Math.random() > 0.5 ? '#c07a50' : '#d4a359',
+          alpha: 1
+        });
+      }
+    }
+
+    window.addEventListener('click', (e) => {
+      playSoftClickSFX();
+      triggerClickBurst(e);
+    });
+
+    function animateCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = burstParticles.length - 1; i >= 0; i--) {
+        let bp = burstParticles[i];
+        bp.x += bp.vx;
+        bp.y += bp.vy;
+        bp.vy += 0.04;
+        bp.alpha -= 0.025;
+
+        if (bp.alpha <= 0) {
+          burstParticles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, bp.alpha);
+        ctx.fillStyle = bp.color;
+        ctx.beginPath();
+        ctx.arc(bp.x, bp.y, bp.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      requestAnimationFrame(animateCanvas);
+    }
+
+    // --- 4. FETCH CSV & RENDER ---
+    async function fetchWishMessages() {
+      const loadingEl = document.getElementById('loading');
+      const boardEl = document.getElementById('message-board');
+
+      try {
+        const response = await fetch(CSV_URL);
+        if (!response.ok) throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`);
+       
+        const csvText = await response.text();
+        const parsedData = parseCSV(csvText);
+
+        const messages = parsedData.slice(1).map(row => ({
+          timestamp: row[0] ? row[0].trim() : '',
+          name: row[1] ? row[1].trim() : '無名許願者',
+          message: row[2] ? row[2].trim() : ''
+        })).filter(item => item.message !== '' || item.name !== '');
+
+        loadingEl.style.display = 'none';
+        boardEl.style.display = 'grid';
+
+        renderMessages(messages);
+
+      } catch (error) {
+        console.error('Fetch Error:', error);
+        loadingEl.innerHTML = `
+          <div class="bg-white/80 p-6 rounded-2xl border border-vintage-border text-center text-vintage-text shadow-sm">
+            <i class="fa-solid fa-triangle-exclamation text-2xl text-vintage-accent mb-2"></i>
+            <h3 class="font-serif font-bold">無法讀取許願池留言</h3>
+            <p class="text-xs text-vintage-muted mt-1">請確認 Google 試算表已開啟「知道連結的人皆可查看」共用權限。</p>
+          </div>
+        `;
+      }
+    }
+
+    function parseCSV(text) {
+      const result = [];
+      let row = [];
+      let cur = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const next = text[i + 1];
+
+        if (c === '"') {
+          if (inQuotes && next === '"') { cur += '"'; i++; }
+          else { inQuotes = !inQuotes; }
+        } else if (c === ',' && !inQuotes) {
+          row.push(cur); cur = '';
+        } else if ((c === '\r' || c === '\n') && !inQuotes) {
+          if (c === '\r' && next === '\n') i++;
+          row.push(cur); cur = '';
+          if (row.some(f => f.length > 0)) result.push(row);
+          row = [];
+        } else {
+          cur += c;
+        }
+      }
+      if (cur.length > 0 || row.length > 0) { row.push(cur); result.push(row); }
+      return result;
+    }
+
+    function renderMessages(messages) {
+      const boardEl = document.getElementById('message-board');
+
+      if (messages.length === 0) {
+        boardEl.innerHTML = `
+          <div class="col-span-full bg-white/80 p-8 rounded-2xl border border-vintage-border text-center text-vintage-muted font-serif">
+            <i class="fa-regular fa-paper-plane text-2xl mb-2 text-vintage-accent"></i>
+            <p>許願池目前尚無悄悄話，快投下第一枚金幣吧！</p>
+          </div>
+        `;
+        return;
+      }
+
+      const htmlContent = messages.reverse().map(item => {
+        const safeName = escapeHTML(item.name);
+        const safeMessage = escapeHTML(item.message);
+        const safeTime = escapeHTML(item.timestamp);
+        const firstChar = safeName.charAt(0).toUpperCase() || '許';
+
+        return `
+          <article class="wish-card bg-white/90 rounded-2xl p-5 border border-vintage-border relative flex flex-col justify-between shine-effect">
+            <div class="vintage-corner v-tl"></div>
+            <div class="vintage-corner v-tr"></div>
+            <div class="vintage-corner v-bl"></div>
+            <div class="vintage-corner v-br"></div>
+
+            <div>
+              <div class="flex items-center pb-3 border-b border-vintage-border/60 mb-3">
+                <div class="w-10 h-10 rounded-full bg-vintage-bg border border-vintage-border text-vintage-accent flex items-center justify-center font-serif font-bold text-base mr-3 shadow-sm flex-shrink-0">
+                  ${firstChar}
+                </div>
+                <div class="flex-1 overflow-hidden">
+                  <div class="font-serif font-bold text-vintage-text text-sm truncate">${safeName}</div>
+                  <div class="text-[11px] font-mono text-vintage-muted mt-0.5"><i class="fa-regular fa-clock"></i> ${safeTime}</div>
+                </div>
+              </div>
+              <div class="text-xs sm:text-sm leading-relaxed text-vintage-text font-serif whitespace-pre-wrap break-words mb-4">
+                ${safeMessage}
+              </div>
+            </div>
+
+            <div class="text-right text-[11px] font-mono text-vintage-accent pt-2 border-t border-vintage-border/30 flex items-center justify-end gap-1">
+              <i class="fa-solid fa-feather"></i> Classic Journal
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      boardEl.innerHTML = htmlContent;
+    }
+
+    function escapeHTML(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
